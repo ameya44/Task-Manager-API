@@ -18,10 +18,12 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Load routes (example: user)
+// Load routes
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api', projectRoutes);
 app.use('/api', taskRoutes);
