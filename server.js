@@ -21,8 +21,11 @@ app.get('/', (req, res) => {
 // Load routes (example: user)
 const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 app.use('/api', userRoutes);
 app.use('/api', projectRoutes);
+app.use('/api', taskRoutes);
+
 
 // Start server
 const PORT = 5000;
