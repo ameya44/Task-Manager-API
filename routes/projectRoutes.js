@@ -1,85 +1,75 @@
 const express = require('express');
 const router = express.Router();
-const Project = require('../models/Project');
+const projectController = require('../controllers/projectController');
 
 // Get user's projects (returns all for simplicity)
-router.get('/projects', async (req, res) => {
-  try {
-    const projects = await Project.find();
-    res.json(projects);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects:
+ *   get:
+ *     summary: Get user projects
+ *     tags: [Projects]
+ */
+router.get('/projects', projectController.getProjects);
 
 // Create new project
-router.post('/projects', async (req, res) => {
-  try {
-    const project = new Project(req.body);
-    await project.save();
-    res.status(201).json(project);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects:
+ *   post:
+ *     summary: Create new project
+ *     tags: [Projects]
+ */
+router.post('/projects', projectController.createProject);
 
 // Get project details
-router.get('/projects/:id', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    res.json(project);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   get:
+ *     summary: Get project details
+ *     tags: [Projects]
+ */
+router.get('/projects/:id', projectController.getProjectById);
 
 // Update project
-router.put('/projects/:id', async (req, res) => {
-  try {
-    const updated = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ error: 'Project not found' });
-    res.json(updated);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   put:
+ *     summary: Update project
+ *     tags: [Projects]
+ */
+router.put('/projects/:id', projectController.updateProject);
 
 // Delete project
-router.delete('/projects/:id', async (req, res) => {
-  try {
-    const deleted = await Project.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Project not found' });
-    res.json({ message: 'Project deleted' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   delete:
+ *     summary: Delete project
+ *     tags: [Projects]
+ */
+router.delete('/projects/:id', projectController.deleteProject);
 
 // Add team member
-router.post('/projects/:id/members', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    project.members.push(req.body.userId);
-    await project.save();
-    res.json(project);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects/{id}/members:
+ *   post:
+ *     summary: Add team member
+ *     tags: [Projects]
+ */
+router.post('/projects/:id/members', projectController.addMember);
 
 // Remove member
-router.delete('/projects/:id/members/:userId', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    project.members = project.members.filter(m => m.toString() !== req.params.userId);
-    await project.save();
-    res.json(project);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/projects/{id}/members/{userId}:
+ *   delete:
+ *     summary: Remove member
+ *     tags: [Projects]
+ */
+router.delete('/projects/:id/members/:userId', projectController.removeMember);
 
 module.exports = router;
